@@ -44,7 +44,11 @@ public class DirectoryManager {
 	private String cutPaste(Folder rootDir, Command c) {
 		Folder srcFolder = InputOutputUtility.getFolder(rootDir, c.getSrcPath());
 		Folder destFolder = InputOutputUtility.getFolder(rootDir, c.getDestPath());
-		Folder targetFolder = srcFolder.getParentFolder().deleteANestedFolder(srcFolder);
+		Folder targetFolder = null;
+		if (srcFolder != null && destFolder != null) {
+			targetFolder = srcFolder.getParentFolder().deleteANestedFolder(srcFolder);
+
+		}
 		if (targetFolder != null && validateDir(srcFolder, destFolder)) {
 			destFolder.addFolder(new Folder(targetFolder));
 			return OK_MSSG;
@@ -59,6 +63,9 @@ public class DirectoryManager {
 		Folder destFolder = InputOutputUtility.getFolder(rootDir, c.getDestPath());
 
 		if (srcFolder != null && validateDir(srcFolder, destFolder)) {
+			if (getDescendandCount(rootDir) + getDescendandCount(srcFolder) > 1000000) {
+				return INVALID_COMMAND;
+			}
 			destFolder.addFolder(new Folder(srcFolder));
 			return OK_MSSG;
 		} else {
@@ -68,6 +75,10 @@ public class DirectoryManager {
 	}
 
 	private boolean validateDir(Folder srcFolder, Folder destFolder) {
+		if (srcFolder == null || destFolder == null) {
+			return false;
+
+		}
 		boolean isValid = true;
 		isValid = isValid && (srcFolder != destFolder);
 		isValid = isValid && !srcFolder.contains(destFolder);
@@ -83,8 +94,19 @@ public class DirectoryManager {
 		if (currFolder == null) {
 			return INVALID_COMMAND;
 		}
+		int count = getDescendandCount(currFolder) - 1;
+		return count + "";
+	}
 
-		return currFolder.getNestedFolders().size() + "";
+	private int getDescendandCount(Folder folder) {
+		if (folder == null) {
+			return 0;
+		}
+		int count = 1;
+		for (Folder f : folder.getNestedFolders()) {
+			count += getDescendandCount(f);
+		}
+		return count;
 	}
 
 

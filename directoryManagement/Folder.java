@@ -24,6 +24,7 @@ public class Folder {
 
 	public void addFolder(Folder folder) {
 		nestedFolders.add(folder);
+		folder.parentFolder = this;
 	}
 
 	public Folder deleteANestedFolder(Folder folder) {
@@ -66,7 +67,7 @@ public class Folder {
 	}
 
 	public String toString() {
-		return /* this.parentFolder.getName()+" : "+ */ this.name + " : " + this.nestedFolders.toString();
+		return this.name + " : " + this.nestedFolders.toString();
 	}
 
 	public String getName() {
