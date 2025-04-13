@@ -6,7 +6,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-public class InputOutput {
+public class InputOutputUtility {
 
 	private int n = 0, q = 0;
 	private int dirSize = 0;
@@ -16,7 +16,7 @@ public class InputOutput {
 
 
 
-	public InputOutput() {
+	public InputOutputUtility() {
 		readDataFromUser();
 	}
 
@@ -63,12 +63,12 @@ public class InputOutput {
 		return rootDir;
 	}
 
-	private Folder getFolder(Folder rootDir, String srcPath) {
-		String[] pathArr = srcPath.split("//");
+	public static Folder getFolder(Folder rootDir, String srcPath) {
+		String[] pathArr = srcPath.split("/");
 		Folder tempFolder = null;
 
 		for (int i = 0; i < pathArr.length; i++) {
-			if ((i == 0 && pathArr[i].equals(rootDir.getName()))) {
+			if (i == 0 && pathArr[i].equals(rootDir.getName())) {
 				tempFolder = rootDir;
 			} else if ((i == 0 && !pathArr[i].equals(rootDir.getName()))) {
 				break;

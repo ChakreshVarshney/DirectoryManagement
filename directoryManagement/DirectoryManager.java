@@ -8,12 +8,12 @@ public class DirectoryManager {
 
 
 	private static final String OK_MSSG = "OK";
-	private static final String INVALID_COMMAND = "Invalid Command";
+	private static final String INVALID_COMMAND = "Invalid command";
 
 
 
 	public void performOperationsAndGenerateOp() {
-		InputOutput io = new InputOutput();
+		InputOutputUtility io = new InputOutputUtility();
 		Folder rootDir = io.getRootDirectory();
 		List<Command> commands = io.getCommands();
 
@@ -26,11 +26,11 @@ public class DirectoryManager {
 			return;
 		}
 		for(Command c:commands) {
-			if(c.getType() == CommandType.CountDesendents) {
+			if (c.getType() == CommandType.countDescendants) {
 				output.add(countDesendent(rootDir, c.srcPath));
-			} else if (c.getType() == CommandType.CopyPaste) {
+			} else if (c.getType() == CommandType.copyPaste) {
 				output.add(copyPaste(rootDir, c));
-			} else if (c.getType() == CommandType.CutPaste) {
+			} else if (c.getType() == CommandType.cutPaste) {
 				output.add(cutPaste(rootDir, c));
 			}else {
 				output.add(INVALID_COMMAND);
@@ -42,8 +42,8 @@ public class DirectoryManager {
 	}
 
 	private String cutPaste(Folder rootDir, Command c) {
-		Folder srcFolder = getFolder(rootDir, c.getSrcPath());
-		Folder destFolder = getFolder(rootDir, c.getDestPath());
+		Folder srcFolder = InputOutputUtility.getFolder(rootDir, c.getSrcPath());
+		Folder destFolder = InputOutputUtility.getFolder(rootDir, c.getDestPath());
 		Folder targetFolder = srcFolder.getParentFolder().deleteANestedFolder(srcFolder);
 		if (targetFolder != null && validateDir(srcFolder, destFolder)) {
 			destFolder.addFolder(new Folder(targetFolder));
@@ -55,8 +55,8 @@ public class DirectoryManager {
 	}
 
 	private String copyPaste(Folder rootDir, Command c) {
-		Folder srcFolder = getFolder(rootDir, c.getSrcPath());
-		Folder destFolder = getFolder(rootDir, c.getDestPath());
+		Folder srcFolder = InputOutputUtility.getFolder(rootDir, c.getSrcPath());
+		Folder destFolder = InputOutputUtility.getFolder(rootDir, c.getDestPath());
 
 		if (srcFolder != null && validateDir(srcFolder, destFolder)) {
 			destFolder.addFolder(new Folder(srcFolder));
@@ -70,31 +70,16 @@ public class DirectoryManager {
 	private boolean validateDir(Folder srcFolder, Folder destFolder) {
 		boolean isValid = true;
 		isValid = isValid && (srcFolder != destFolder);
-		isValid = isValid && srcFolder.contains(destFolder);
-		isValid = isValid && destFolder.hasFolderWithSameName(srcFolder);
+		isValid = isValid && !srcFolder.contains(destFolder);
+		isValid = isValid && !destFolder.hasFolderWithSameName(srcFolder);
 
 		return isValid;
 	}
 
-	private Folder getFolder(Folder rootDir, String srcPath) {
-		String[] pathArr = srcPath.split("//");
-		Folder tempFolder = null;
 
-		for (int i = 0; i < pathArr.length; i++) {
-			if ((i == 0 && pathArr[i].equals(rootDir.getName()))) {
-				tempFolder = rootDir;
-			} else if ((i == 0 && !pathArr[i].equals(rootDir.getName()))) {
-				break;
-			} else {
-				tempFolder = tempFolder.getFolderByName(pathArr[i]);
-			}
-
-		}
-		return tempFolder;
-	}
 
 	private String countDesendent(Folder rootDir, String srcPath) {
-		Folder currFolder = getFolder(rootDir, srcPath);
+		Folder currFolder = InputOutputUtility.getFolder(rootDir, srcPath);
 		if (currFolder == null) {
 			return INVALID_COMMAND;
 		}

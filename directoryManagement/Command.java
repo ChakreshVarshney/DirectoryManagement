@@ -13,6 +13,10 @@ public class Command {
 		}
 	}
 
+	public String toString() {
+		return "type: " + type.toString() + " srcPath: " + srcPath + " destPath: " + destPath;
+	}
+
 	public CommandType getType() {
 		return type;
 	}
